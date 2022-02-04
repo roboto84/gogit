@@ -136,7 +136,7 @@ class GopherGit:
         return [path for path in os.walk(files_path)]
 
 
-if __name__ == '__main__':
+def run_main():
     try:
         load_dotenv()
         PROJECTS_DIR: str = str(os.getenv('PROJECTS_DIR'))
@@ -160,3 +160,6 @@ if __name__ == '__main__':
     except TypeError:
         print(f'Received TypeError: Check that the .env project file is configured correctly')
         sys.exit()
+
+if __name__ == '__main__':
+    run_main()
