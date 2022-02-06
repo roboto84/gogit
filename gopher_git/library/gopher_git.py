@@ -2,13 +2,14 @@
 import os
 import sys
 from termcolor import colored
+from halo import Halo
 from .gopher_git_utils import GopherGitUtils
 from .gopher_git_printer import GopherGitPrinter
 
 
 class GopherGit:
-    def __init__(self, projects_path: str, projects_collect_strategy: str = 'all'):
-        self._projects_path: str = projects_path
+    def __init__(self, projects_path: str = None, projects_collect_strategy: str = 'all'):
+        self._projects_path: str = projects_path if projects_path else os.getcwd()
         self._projects_collect_strategy: str = projects_collect_strategy
         self._git_projects: list[dict] = []
         self._verify_inputs(self._projects_path, self._projects_collect_strategy)
@@ -51,11 +52,11 @@ class GopherGit:
         try:
             git_projects: list[dict] = GopherGitUtils.get_git_projects(self._projects_path)
             for git_project in git_projects:
-                git_latest_commit: dict = GopherGitUtils.get_latest_git_commit_summary(git_project["directory_path"])
                 git_status: dict = GopherGitUtils.get_git_status(
                     git_project["directory_path"],
                     self._projects_collect_strategy
                 )
+                git_latest_commit: dict = GopherGitUtils.get_latest_git_commit_summary(git_project["directory_path"])
                 self._git_projects.append({
                     'git_project_details': git_project,
                     'git_latest_commit': git_latest_commit,
@@ -67,9 +68,13 @@ class GopherGit:
 
     def terminal_run(self) -> None:
         try:
+            spinner = Halo(text='Collecting Git Projects...', spinner='dots')
+            spinner.start()
+            collected_projects: list[dict] = self._collect_git_projects()
+            spinner.stop()
             GopherGitPrinter.print_to_terminal(
                 self._projects_path,
-                self._collect_git_projects(),
+                collected_projects,
                 self._projects_collect_strategy
             )
             sys.exit()
@@ -89,15 +94,16 @@ def print_terminal_help():
 
 def terminal_main() -> None:
     try:
-        calling_directory: str = os.getcwd()
+        spinner = Halo(text='Loading', spinner='dots')
+        spinner.start()
         if len(sys.argv) == 1:
-            gopher_git_job = GopherGit(calling_directory)
+            gopher_git_job = GopherGit()
             gopher_git_job.terminal_run()
         elif len(sys.argv) == 2:
             if '-h' in sys.argv[1]:
                 print_terminal_help()
             else:
-                gopher_git_job = GopherGit(calling_directory, sys.argv[1])
+                gopher_git_job = GopherGit(None, sys.argv[1])
                 gopher_git_job.terminal_run()
         elif len(sys.argv) == 3:
             gopher_git_job = GopherGit(sys.argv[2], sys.argv[1])

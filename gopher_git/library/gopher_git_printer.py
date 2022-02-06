@@ -58,15 +58,19 @@ class GopherGitPrinter:
 
     @staticmethod
     def latest_git_commit_to_str(latest_commit: dict) -> str:
-        latest_commit_time_delta: tuple = GopherGitPrinter.time_delta_to_str(latest_commit["time_since_commit"])
-        colored_time_delta: str = colored(
-            f'{latest_commit_time_delta[0]} {latest_commit_time_delta[1]} ago',
-            attrs=['bold']
-        )
-        return f'{colored(latest_commit["commit_author"], attrs=["bold"])} | ' \
-               f'{colored(latest_commit["commit_hash"], "magenta")} ' \
-               f'({colored_time_delta} {latest_commit["commit_date"].strftime("%m/%d/%Y %H:%M:%S")}): ' \
-               f'{latest_commit["commit_message"]}'
+        if latest_commit:
+            latest_commit_time_delta: tuple = GopherGitPrinter.time_delta_to_str(latest_commit["time_since_commit"])
+            colored_time_delta: str = colored(
+                f'{latest_commit_time_delta[0]} {latest_commit_time_delta[1]} ago',
+                attrs=['bold']
+            )
+            colored_author: str = colored(latest_commit["commit_author"], attrs=["bold"])
+            return f'Latest {colored_time_delta} by {colored_author} ' \
+                   f'({latest_commit["commit_date"].strftime("%m/%d/%Y %H:%M")}) ' \
+                   f'{colored(latest_commit["commit_hash"], "magenta")}: ' \
+                   f'{latest_commit["commit_message"]}'
+        else:
+            return 'Current branch does not have any commits yet'
 
     @staticmethod
     def print_to_terminal(projects_path: str, git_projects: list[dict], projects_collect_strategy):

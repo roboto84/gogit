@@ -85,43 +85,49 @@ class GopherGitUtils:
 
     @staticmethod
     def get_latest_git_commit_summary(project_path: str) -> dict:
-        temp = subprocess.Popen(['git', 'log'], cwd=project_path, stdout=subprocess.PIPE)
-        subprocess_output: tuple[bytes, Any] = temp.communicate()
-        raw_log_output: str = subprocess_output[0].decode()
-        output_text_list: list[str] = raw_log_output.split('\n')
-        current_date: datetime = datetime.now(timezone.utc)
-        commit_tracking_index: int = -1
-        commit_hash: str = ''
-        commit_author: str = ''
-        commit_date: str = ''
-        commit_message: str = ''
+        try:
+            temp = subprocess.Popen(['git', 'log'], cwd=project_path, stdout=subprocess.PIPE)
+            subprocess_output: tuple[bytes, Any] = temp.communicate()
+            raw_log_output: str = subprocess_output[0].decode()
+            output_text_list: list[str] = raw_log_output.split('\n')
+            current_date: datetime = datetime.now(timezone.utc)
+            commit_tracking_index: int = -1
+            commit_hash: str = ''
+            commit_author: str = ''
+            commit_date: str = ''
+            commit_message: str = ''
 
-        for index, log_element in enumerate(output_text_list):
-            element_split = log_element.split()
-            if len(element_split):
-                if 'commit' in element_split[0]:
-                    if index != 0:
-                        break
-                    commit_hash = log_element.split()[1][0:7]
-                elif 'Author:' in element_split:
-                    commit_author = ''.join(f'{author_part} ' for author_part in log_element.split()[1:-1]).rstrip()
-                elif 'Date:' in element_split:
-                    commit_tracking_index = index
-                    commit_date = log_element.split(':', 1)[1].strip()
-                elif commit_tracking_index != -1:
-                    commit_message = log_element.strip()
-                    break
+            if raw_log_output != '':
+                for index, log_element in enumerate(output_text_list):
+                    element_split = log_element.split()
+                    if len(element_split):
+                        if 'commit' in element_split[0]:
+                            if index != 0:
+                                break
+                            commit_hash = log_element.split()[1][0:7]
+                        elif 'Author:' in element_split:
+                            commit_author = ''.join(f'{author_part} ' for author_part in log_element.split()[1:-1]).rstrip()
+                        elif 'Date:' in element_split:
+                            commit_tracking_index = index
+                            commit_date = log_element.split(':', 1)[1].strip()
+                        elif commit_tracking_index != -1:
+                            commit_message = log_element.strip()
+                            break
 
-        commit_datetime: datetime = datetime.strptime(commit_date, '%a %b %d %H:%M:%S %Y %z')
-        time_since_commit: timedelta = current_date - commit_datetime
+                commit_datetime: datetime = datetime.strptime(commit_date, '%a %b %d %H:%M:%S %Y %z')
+                time_since_commit: timedelta = current_date - commit_datetime
 
-        return {
-            'commit_message':  commit_message,
-            'commit_date':  commit_datetime,
-            'time_since_commit':  time_since_commit,
-            'commit_author':  commit_author,
-            'commit_hash':  commit_hash
-        }
+                return {
+                    'commit_message':  commit_message,
+                    'commit_date':  commit_datetime,
+                    'time_since_commit':  time_since_commit,
+                    'commit_author':  commit_author,
+                    'commit_hash':  commit_hash
+                }
+            else:
+                return {}
+        except Exception as error:
+            print(f'Received exception: {project_path}: {error}')
 
     @staticmethod
     def get_git_projects(projects_path: str) -> list[dict]:

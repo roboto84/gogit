@@ -7,6 +7,7 @@ authors = ['roboto84 <7658704+roboto84@users.noreply.github.com>']
 [tool.poetry.dependencies]
 python = '^3.9'
 termcolor= '^1.1.0'
+halo='^0.0.31'
 
 [tool.poetry.dev-dependencies]
 pytest = '^5.2'
