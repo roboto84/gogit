@@ -94,8 +94,6 @@ def print_terminal_help():
 
 def terminal_main() -> None:
     try:
-        spinner = Halo(text='Loading', spinner='dots')
-        spinner.start()
         if len(sys.argv) == 1:
             gopher_git_job = GopherGit()
             gopher_git_job.terminal_run()
