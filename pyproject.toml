@@ -1,20 +1,20 @@
 [tool.poetry]
-name = 'gopher_git'
+name = 'gogit'
 version = '0.1.0'
 description = 'Tool that shows current git project information given a parent directory containing one or multiple git project directories.'
 authors = ['roboto84 <7658704+roboto84@users.noreply.github.com>']
 
 [tool.poetry.dependencies]
-python = '^3.9'
+python = '^3.10'
 termcolor= '^1.1.0'
 halo='^0.0.31'
 
 [tool.poetry.dev-dependencies]
-pytest = '^5.2'
+pytest = '^6.2.5'
 
 [build-system]
 requires = ['poetry-core>=1.0.0']
 build-backend = 'poetry.core.masonry.api'
 
 [tool.poetry.scripts]
-gogit = "gopher_git.library.gopher_git:terminal_main"
+gogit = "gogit.library.gogit:terminal_main"

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 
-class GopherGitUtils:
+class GogitUtils:
     @staticmethod
     def get_recursive_directory_files_and_subdir(files_path: str) -> list[tuple]:
         return [path for path in os.walk(files_path)]
@@ -65,7 +65,7 @@ class GopherGitUtils:
                 if output_first_letter in git_change_types:
                     modified_files.append({
                         'short_type': output_text_split[0],
-                        'long_type': GopherGitUtils.raw_change_type(output_first_letter),
+                        'long_type': GogitUtils.raw_change_type(output_first_letter),
                         'file_name': output_text_split[1]
                     })
                 elif output_first_letter == '?':
@@ -132,7 +132,7 @@ class GopherGitUtils:
     @staticmethod
     def get_git_projects(projects_path: str) -> list[dict]:
         git_projects: list[dict] = []
-        directory_files_and_subdir_list: list[tuple] = GopherGitUtils.get_recursive_directory_files_and_subdir(
+        directory_files_and_subdir_list: list[tuple] = GogitUtils.get_recursive_directory_files_and_subdir(
             projects_path
         )
         for directory_data in directory_files_and_subdir_list:

@@ -1,4 +1,4 @@
-from gopher_git import __version__
+from gogit import __version__
 
 
 def test_version():

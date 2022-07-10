@@ -1,5 +1,5 @@
 =================
-gopher_git
+gogit
 =================
 
 Tool that shows current git project information given a parent directory containing

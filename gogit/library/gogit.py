@@ -3,11 +3,11 @@ import os
 import sys
 from termcolor import colored
 from halo import Halo
-from .gopher_git_utils import GopherGitUtils
-from .gopher_git_printer import GopherGitPrinter
+from .gogit_utils import GogitUtils
+from .gogit_printer import GogitPrinter
 
 
-class GopherGit:
+class Gogit:
     def __init__(self, projects_path: str = None, projects_collect_strategy: str = 'all'):
         self._projects_path: str = projects_path if projects_path else os.getcwd()
         self._projects_collect_strategy: str = projects_collect_strategy
@@ -26,37 +26,37 @@ class GopherGit:
     @staticmethod
     def strategy_descriptions_to_colored_str() -> str:
         message = ''
-        for strategy, description in GopherGit.get_strategy_descriptions().items():
+        for strategy, description in Gogit.get_strategy_descriptions().items():
             message = message + f'\n\t{colored(strategy, color="yellow")}: {description}'
         return message + '\n'
 
     @staticmethod
     def strategy_description_summary() -> str:
-        return f'  Project Search Strategy options are: {GopherGit.get_strategy_types()}\n' \
-               f'{GopherGit.strategy_descriptions_to_colored_str()}'
+        return f'  Project Search Strategy options are: {Gogit.get_strategy_types()}\n' \
+               f'{Gogit.strategy_descriptions_to_colored_str()}'
 
     @staticmethod
     def get_strategy_types() -> list[str]:
-        return list(GopherGit.get_strategy_descriptions().keys())
+        return list(Gogit.get_strategy_descriptions().keys())
 
     @staticmethod
     def _verify_inputs(files_path: str, strategy: str) -> None:
-        strategy_types: list[str] = GopherGit.get_strategy_types()
+        strategy_types: list[str] = Gogit.get_strategy_types()
         if not os.path.isdir(files_path):
             sys.exit(f'\n  File path given, "{files_path}", is not a valid path\n')
         elif strategy not in strategy_types:
             sys.exit(f'\n  File path "{files_path}" is valid, but project search strategy "{strategy}" was not.\n'
-                     f'{GopherGit.strategy_description_summary()}')
+                     f'{Gogit.strategy_description_summary()}')
 
     def _collect_git_projects(self) -> list[dict]:
         try:
-            git_projects: list[dict] = GopherGitUtils.get_git_projects(self._projects_path)
+            git_projects: list[dict] = GogitUtils.get_git_projects(self._projects_path)
             for git_project in git_projects:
-                git_status: dict = GopherGitUtils.get_git_status(
+                git_status: dict = GogitUtils.get_git_status(
                     git_project["directory_path"],
                     self._projects_collect_strategy
                 )
-                git_latest_commit: dict = GopherGitUtils.get_latest_git_commit_summary(git_project["directory_path"])
+                git_latest_commit: dict = GogitUtils.get_latest_git_commit_summary(git_project["directory_path"])
                 self._git_projects.append({
                     'git_project_details': git_project,
                     'git_latest_commit': git_latest_commit,
@@ -72,7 +72,7 @@ class GopherGit:
             spinner.start()
             collected_projects: list[dict] = self._collect_git_projects()
             spinner.stop()
-            GopherGitPrinter.print_to_terminal(
+            GogitPrinter.print_to_terminal(
                 self._projects_path,
                 collected_projects,
                 self._projects_collect_strategy
@@ -89,22 +89,22 @@ def print_terminal_help():
           f'Defaults given no params:\n'
           f'   <{parent_directory_display}> = current calling directory\n'
           f'   <{strategy_param_display}> = "all" \n')
-    print(f'{GopherGit.strategy_description_summary()}')
+    print(f'{Gogit.strategy_description_summary()}')
 
 
 def terminal_main() -> None:
     try:
         if len(sys.argv) == 1:
-            gopher_git_job = GopherGit()
+            gopher_git_job = Gogit()
             gopher_git_job.terminal_run()
         elif len(sys.argv) == 2:
             if '-h' in sys.argv[1]:
                 print_terminal_help()
             else:
-                gopher_git_job = GopherGit(None, sys.argv[1])
+                gopher_git_job = Gogit(None, sys.argv[1])
                 gopher_git_job.terminal_run()
         elif len(sys.argv) == 3:
-            gopher_git_job = GopherGit(sys.argv[2], sys.argv[1])
+            gopher_git_job = Gogit(sys.argv[2], sys.argv[1])
             gopher_git_job.terminal_run()
         else:
             print_terminal_help()

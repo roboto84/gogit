@@ -1,10 +1,10 @@
 
 from datetime import timedelta
 from termcolor import colored
-from .gopher_git_utils import GopherGitUtils
+from .gogit_utils import GogitUtils
 
 
-class GopherGitPrinter:
+class GogitPrinter:
     @staticmethod
     def print_git_project_summary(project_name: str, git_branch: str, git_log: dict, branch_status: str,
                                   branch_state_comparator: bool, project_path: str, modified_files: list[dict],
@@ -16,9 +16,9 @@ class GopherGitPrinter:
         print(f'  {git_branch} {project_path}')
         if branch_state_comparator:
             print(f'  {branch_status}')
-        print(f'  {GopherGitPrinter.latest_git_commit_to_str(git_log)}')
-        GopherGitPrinter.print_modified_files(modified_files)
-        GopherGitPrinter.print_untracked_files(untracked_files)
+        print(f'  {GogitPrinter.latest_git_commit_to_str(git_log)}')
+        GogitPrinter.print_modified_files(modified_files)
+        GogitPrinter.print_untracked_files(untracked_files)
         print('')
 
     @staticmethod
@@ -59,7 +59,7 @@ class GopherGitPrinter:
     @staticmethod
     def latest_git_commit_to_str(latest_commit: dict) -> str:
         if latest_commit:
-            latest_commit_time_delta: tuple = GopherGitPrinter.time_delta_to_str(latest_commit["time_since_commit"])
+            latest_commit_time_delta: tuple = GogitPrinter.time_delta_to_str(latest_commit["time_since_commit"])
             colored_time_delta: str = colored(
                 f'{latest_commit_time_delta[0]} {latest_commit_time_delta[1]} ago',
                 attrs=['bold']
@@ -80,11 +80,11 @@ class GopherGitPrinter:
                 for git_project in git_projects:
                     projects_comparator: bool = True
 
-                    if GopherGitUtils.is_strategy_collect_changed_projects(projects_collect_strategy):
+                    if GogitUtils.is_strategy_collect_changed_projects(projects_collect_strategy):
                         projects_comparator = git_project['git_status']['has_project_got_changes']
 
                     if projects_comparator:
-                        GopherGitPrinter.print_git_project_summary(
+                        GogitPrinter.print_git_project_summary(
                             git_project['git_project_details']['directory_name'],
                             git_project['git_status']['project_branch'],
                             git_project['git_latest_commit'],
