@@ -98,3 +98,5 @@ class GogitPrinter:
                 print(f'  No Git projects found in "{projects_path}"\n')
         except TypeError as type_error:
             print(f'Received TypeError: {type_error}')
+        except Exception as error:
+            print(f'Received exception: {error}')

@@ -1,6 +1,7 @@
 
 import os
 import subprocess
+import sys
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -132,17 +133,24 @@ class GogitUtils:
     @staticmethod
     def get_git_projects(projects_path: str) -> list[dict]:
         git_projects: list[dict] = []
-        directory_files_and_subdir_list: list[tuple] = GogitUtils.get_recursive_directory_files_and_subdir(
-            projects_path
-        )
-        for directory_data in directory_files_and_subdir_list:
-            if '.git' in directory_data[1]:
-                directory_name: str = directory_data[0].split('/')[-1]
-                git_projects.append({
-                    'directory_name': directory_name,
-                    'directory_path': directory_data[0],
-                    'subdirectories': directory_data[1],
-                    'files': directory_data[2]
-                })
-        git_projects.sort(key=lambda project: project['directory_name'])
+
+        try:
+            directory_files_and_subdir_list: list[tuple] = GogitUtils.get_recursive_directory_files_and_subdir(
+                projects_path
+            )
+            for directory_data in directory_files_and_subdir_list:
+                if '.git' in directory_data[1]:
+                    directory_name: str = directory_data[0].split('/')[-1]
+                    git_projects.append({
+                        'directory_name': directory_name,
+                        'directory_path': directory_data[0],
+                        'subdirectories': directory_data[1],
+                        'files': directory_data[2]
+                    })
+            git_projects.sort(key=lambda project: project['directory_name'])
+        except KeyboardInterrupt:
+            print(f'\nReceived KeyboardInterrupt: exiting program')
+            sys.exit()
+        except Exception as error:
+            print(f'Received exception: {error}')
         return git_projects
