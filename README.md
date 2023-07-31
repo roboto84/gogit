@@ -5,11 +5,12 @@
 </div>
 
 ## About
-`gogit` is a tool that recursively transverses and shows current git project information given a parent directory containing one or more git project directories.
+`gogit` is a tool that recursively traverses and shows current git project information given a parent directory containing one or more git project directories.
 
 ## Requirements
+- git 2.39.2 ^
 - [pipx](https://github.com/pypa/pipx "pipx") or [poetry](https://github.com/python-poetry/poetry "poetry")
-- Python 3.10^
+- Python 3.10 ^
 
 ## Install
 - With pipx:
